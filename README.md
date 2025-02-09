@@ -4,7 +4,7 @@ Naoris Node Protocol BOT
 - Register Here : [Naoris Protocol Testnet](https://naorisprotocol.network/testnet)
 - Dwonload Wallet: [Naoris Protocol Wallet](https://chromewebstore.google.com/detail/naoris-protocol-wallet/dbgibbbeebmbmmhmebogidfbfehejgfo)
 - Dwonload Extension: [Naoris Protocol Browser Security Node](https://chromewebstore.google.com/detail/naoris-protocol-browser-s/cpikalnagknmlfhnilhfelifgbollmmp)
-- Use Code: TRASzfGgEMFGHj9K
+- Use Code: ykt4ag1LN39R6c4H 
 
 ## Features
 
@@ -24,7 +24,7 @@ Naoris Node Protocol BOT
 
 1. **Clone The Repositories:**
    ```bash
-   git clone https://github.com/vonssy/NaorisNode-BOT.git
+   git clone https://github.com/airdropbomb/NaorisNode-BOT.git
    ```
    ```bash
    cd NaorisNode-BOT
@@ -36,13 +36,10 @@ Naoris Node Protocol BOT
    ```
 
 ## Configuration
-
-### Screenshots
-
-<div style="text-align: center;">
-  <h4><strong>Device Hash</strong></h4>
-  <img src="image.jpg" alt="Image" width="500"/>
-</div>
+  ```bash
+  nano accounts.json
+  ```
+## Go to Web > Inspect > Application > Local Storage > got Device hash & Wallet address
 
 - **accounts.json:** You will find the file `accounts.json` inside the project directory. Make sure `accounts.json` contains data that matches the format expected by the script. Here are examples of file formats:
   ```bash
