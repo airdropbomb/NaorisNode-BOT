@@ -248,7 +248,7 @@ class NaorisProtocol:
                 return self.print_message(self.mask_account(address), proxy, Fore.RED, f"Turn On Protection Failed: {Fore.YELLOW+Style.BRIGHT}{str(e)}")
     
     async def send_heartbeats(self, address: str, device_hash: int, token: str, use_proxy: bool, proxy=None, retries=5):
-        url = "https://naorisprotocol.network/sec-api/api/produce-to-kafka"  # ဒီ URL ကို documentation နဲ့ ပြန်စစ်ပါ
+        url = "https://naorisprotocol.network/sec-api/api/heartbeat"  # ဒီ URL ကို documentation နဲ့ ပြန်စစ်ပါ
         data = json.dumps({"topic":"device-heartbeat", "inputData":{"walletAddress":address, "deviceHash":device_hash}})
         headers = {
             **self.headers,
