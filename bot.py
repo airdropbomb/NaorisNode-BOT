@@ -251,34 +251,38 @@ class NaorisProtocol:
                 return self.print_message(self.mask_account(address), proxy, Fore.RED, f"Turn On Protection Failed: {Fore.YELLOW+Style.BRIGHT}{str(e)}")
     
     async def send_heartbeats(self, address: str, device_hash: int, token: str, use_proxy: bool, proxy=None, retries=5):
-        url = "https://naorisprotocol.network/sec-api/api/produce-to-kafka"
-        data = json.dumps({"topic":"device-heartbeat", "inputData":{"walletAddress":address, "deviceHash":device_hash}})
-        headers = {
-            **self.headers,
-            "Authorization": f"Bearer {token}",
-            "Content-Length": str(len(data)),
-            "Content-Type": "application/json"
-        }
-        for attempt in range(retries):
-            try:
-                response = await asyncio.to_thread(requests.post, url=url, headers=headers, data=data, proxy=proxy, timeout=60, impersonate="safari15_5")
-                if response.status_code == 401:
-                    token = await self.process_get_access_token(address, use_proxy)
-                    headers["Authorization"] = f"Bearer {token}"
-                    continue
+    url = "https://naorisprotocol.network/sec-api/api/produce-to-kafka"  # ဒီ URL ကို စစ်ပါ
+    data = json.dumps({"topic":"device-heartbeat", "inputData":{"walletAddress":address, "deviceHash":device_hash}})
+    headers = {
+        **self.headers,
+        "Authorization": f"Bearer {token}",
+        "Content-Length": str(len(data)),
+        "Content-Type": "application/json"
+    }
+    for attempt in range(retries):
+        try:
+            response = await asyncio.to_thread(requests.post, url=url, headers=headers, data=data, proxy=proxy, timeout=60, impersonate="safari15_5")
+            if response.status_code == 401:
+                token = await self.process_get_access_token(address, use_proxy)
+                headers["Authorization"] = f"Bearer {token}"
+                continue
 
-                response.raise_for_status()
-                return response.json()
-            except Exception as e:
-                if attempt < retries - 1:
-                    await asyncio.sleep(5)
-                    continue
-                
-                if "502" in str(e):
-                    return self.print_message(self.mask_account(address), proxy, Fore.RED, f"PING Failed: {Fore.YELLOW+Style.BRIGHT}Server Down")
-                
-                self.rotate_proxy_for_account(address) if use_proxy else None
-                return self.print_message(self.mask_account(address), proxy, Fore.RED, f"PING Failed: {Fore.YELLOW+Style.BRIGHT}{str(e)}")
+            response.raise_for_status()
+            result = response.json()
+            self.print_message(address, proxy, Fore.GREEN, "PING Success")
+            return result
+        except Exception as e:
+            if attempt < retries - 1:
+                await asyncio.sleep(5)
+                continue
+            
+            error_msg = f"PING Failed: {str(e)}"
+            if hasattr(e, 'response'):
+                error_msg += f" - Server Response: {e.response.text}"
+            self.print_message(address, proxy, Fore.RED, error_msg)
+            if use_proxy:
+                self.rotate_proxy_for_account(address)
+            return None
             
     async def process_get_access_token(self, address: str, use_proxy: bool):
         proxy = self.get_next_proxy_for_account(address) if use_proxy else None
